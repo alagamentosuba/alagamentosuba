@@ -1,25 +1,32 @@
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Testimonials = () => {
+  const scrollToContact = () => {
+    const element = document.getElementById("contato");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const testimonials = [
     {
       name: "Maria Santos",
       location: "São Paulo, SP",
-      text: "A economia na conta de luz foi imediata. Em 6 meses, já estamos economizando mais de 80%. O atendimento foi excelente do início ao fim.",
+      text: "Quando vi a primeira conta de luz depois da instalação, chorei de emoção. Finalmente posso respirar financeiramente e ainda deixar um mundo melhor para meus filhos.",
       rating: 5,
       savings: "R$ 450/mês",
     },
     {
       name: "Carlos Oliveira",
       location: "Rio de Janeiro, RJ",
-      text: "Melhor investimento que fiz para minha empresa. Além da economia, demonstra nosso compromisso com a sustentabilidade.",
+      text: "Minha empresa economiza quase R$ 3 mil por mês. É dinheiro que posso investir no crescimento do negócio e nos meus colaboradores. Transformou tudo!",
       rating: 5,
       savings: "R$ 2.800/mês",
     },
     {
       name: "Ana Paula Costa",
       location: "Belo Horizonte, MG",
-      text: "Processo muito tranquilo e profissional. A equipe é extremamente competente e o sistema funciona perfeitamente.",
+      text: "Tinha medo de ser complicado, mas foi surpreendentemente fácil. Hoje, cada vez que olho para os painéis no teto, sinto orgulho de estar fazendo a coisa certa.",
       rating: 5,
       savings: "R$ 320/mês",
     },
@@ -63,6 +70,20 @@ const Testimonials = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Emotional CTA */}
+        <div className="max-w-3xl mx-auto text-center mt-16">
+          <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+            Sua história de economia começa aqui
+          </h3>
+          <p className="text-lg text-neutral-600 mb-6">
+            Centenas de famílias já estão vivendo com mais tranquilidade. Você pode ser a próxima!
+          </p>
+          <Button size="lg" onClick={scrollToContact} className="group">
+            Quero minha simulação gratuita
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
       </div>
     </section>

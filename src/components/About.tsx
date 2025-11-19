@@ -1,6 +1,13 @@
-import { Award, Shield, Users } from "lucide-react";
+import { Award, Shield, Users, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const About = () => {
+  const scrollToContact = () => {
+    const element = document.getElementById("contato");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const features = [
     {
       icon: Shield,
@@ -46,6 +53,20 @@ const About = () => {
               <p className="text-neutral-600">{feature.description}</p>
             </div>
           ))}
+        </div>
+
+        {/* Emotional CTA */}
+        <div className="max-w-3xl mx-auto text-center mt-16 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/5 rounded-2xl p-8 lg:p-12">
+          <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+            Você merece viver sem se preocupar com energia
+          </h3>
+          <p className="text-lg text-neutral-600 mb-6">
+            Junte-se a centenas de famílias que já transformaram suas vidas com energia solar
+          </p>
+          <Button size="lg" onClick={scrollToContact} className="group">
+            Quero economizar agora
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
       </div>
     </section>

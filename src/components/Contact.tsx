@@ -57,10 +57,10 @@ const Contact = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Simule Seu Sistema Solar
+            Dê o Primeiro Passo Para Sua Liberdade Financeira
           </h2>
           <p className="text-lg text-neutral-600">
-            Preencha o formulário abaixo e receba uma proposta personalizada em até 24 horas
+            Preencha o formulário e descubra quanto você pode economizar. <span className="font-semibold text-foreground">Sua simulação é 100% gratuita</span> e sem compromisso.
           </p>
         </div>
 

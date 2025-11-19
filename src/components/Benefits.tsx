@@ -1,6 +1,13 @@
-import { TrendingDown, Leaf, Home, Sun } from "lucide-react";
+import { TrendingDown, Leaf, Home, Sun, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Benefits = () => {
+  const scrollToContact = () => {
+    const element = document.getElementById("contato");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const benefits = [
     {
       icon: TrendingDown,
@@ -62,6 +69,22 @@ const Benefits = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Emotional CTA */}
+        <div className="max-w-3xl mx-auto text-center mt-16">
+          <div className="bg-gradient-to-br from-solar-green-light via-background to-solar-yellow/10 rounded-2xl p-8 lg:p-12 border-2 border-primary/20">
+            <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+              Proteja sua família e o planeta ao mesmo tempo
+            </h3>
+            <p className="text-lg text-neutral-600 mb-6">
+              Enquanto você economiza, está construindo um futuro melhor para seus filhos. É o investimento mais inteligente que você pode fazer.
+            </p>
+            <Button size="lg" onClick={scrollToContact} className="group">
+              Quero fazer parte dessa mudança
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>

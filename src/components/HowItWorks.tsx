@@ -1,7 +1,14 @@
-import { FileSearch, Wrench, Zap, CheckCircle } from "lucide-react";
+import { FileSearch, Wrench, Zap, CheckCircle, ArrowRight } from "lucide-react";
 import installationImage from "@/assets/installation-process.jpg";
+import { Button } from "@/components/ui/button";
 
 const HowItWorks = () => {
+  const scrollToContact = () => {
+    const element = document.getElementById("contato");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const steps = [
     {
       icon: FileSearch,
@@ -69,6 +76,25 @@ const HowItWorks = () => {
             <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-xl max-w-xs">
               <p className="text-sm font-medium">Processo completo em</p>
               <p className="text-3xl font-bold">30-45 dias</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Emotional CTA */}
+        <div className="max-w-3xl mx-auto text-center mt-16">
+          <div className="bg-foreground text-background rounded-2xl p-8 lg:p-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
+            <div className="relative z-10">
+              <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+                Em apenas 30 dias, você pode estar economizando
+              </h3>
+              <p className="text-lg mb-6 opacity-90">
+                Não deixe seu dinheiro escapar pela conta de luz. Cada mês que passa é dinheiro perdido.
+              </p>
+              <Button size="lg" onClick={scrollToContact} variant="secondary" className="group">
+                Começar minha economia agora
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
             </div>
           </div>
         </div>
