@@ -3,14 +3,11 @@ import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-solar.jpg";
 
 const Hero = () => {
-  const scrollToContact = () => {
+  const handleCTAClick = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead');
     }
-    const element = document.getElementById("contato");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    window.open('https://wa.me/553288190835?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20de%20energia%20solar', '_blank');
   };
 
   return (
@@ -37,11 +34,11 @@ const Hero = () => {
             Não é só economia — é <span className="font-semibold">liberdade financeira e paz de espírito</span>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" onClick={scrollToContact} className="group">
+            <Button size="lg" onClick={handleCTAClick} className="group">
               Simule seu sistema
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button size="lg" variant="outline" onClick={scrollToContact}>
+            <Button size="lg" variant="outline" onClick={handleCTAClick}>
               Fale com um especialista
             </Button>
           </div>

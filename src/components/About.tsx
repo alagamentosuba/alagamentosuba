@@ -2,14 +2,11 @@ import { Award, Shield, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const About = () => {
-  const scrollToContact = () => {
+  const handleCTAClick = () => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead');
     }
-    const element = document.getElementById("contato");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    window.open('https://wa.me/553288190835?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20de%20energia%20solar', '_blank');
   };
   const features = [
     {
@@ -66,7 +63,7 @@ const About = () => {
           <p className="text-lg text-neutral-600 mb-6">
             Junte-se a centenas de famílias que já transformaram suas vidas com energia solar
           </p>
-          <Button size="lg" onClick={scrollToContact} className="group">
+          <Button size="lg" onClick={handleCTAClick} className="group">
             Quero economizar agora
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>

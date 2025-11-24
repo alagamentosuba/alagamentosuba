@@ -3,11 +3,11 @@ import installationImage from "@/assets/installation-process.jpg";
 import { Button } from "@/components/ui/button";
 
 const HowItWorks = () => {
-  const scrollToContact = () => {
-    const element = document.getElementById("contato");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleCTAClick = () => {
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Lead');
     }
+    window.open('https://wa.me/553288190835?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20de%20energia%20solar', '_blank');
   };
   const steps = [
     {
@@ -91,7 +91,7 @@ const HowItWorks = () => {
               <p className="text-lg mb-6 opacity-90">
                 Não deixe seu dinheiro escapar pela conta de luz. Cada mês que passa é dinheiro perdido.
               </p>
-              <Button size="lg" onClick={scrollToContact} variant="secondary" className="group">
+              <Button size="lg" onClick={handleCTAClick} variant="secondary" className="group">
                 Começar minha economia agora
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
