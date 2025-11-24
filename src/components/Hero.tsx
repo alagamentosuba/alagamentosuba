@@ -4,6 +4,9 @@ import heroImage from "@/assets/hero-solar.jpg";
 
 const Hero = () => {
   const scrollToContact = () => {
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Lead');
+    }
     const element = document.getElementById("contato");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
