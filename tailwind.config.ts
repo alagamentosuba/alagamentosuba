@@ -52,6 +52,8 @@ export default {
         },
         solar: {
           yellow: "hsl(var(--solar-yellow))",
+          blue: "hsl(var(--solar-blue))",
+          "blue-light": "hsl(var(--solar-blue-light))",
           green: "hsl(var(--solar-green))",
           "green-light": "hsl(var(--solar-green-light))",
         },
