@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -20,8 +20,8 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection("hero")}>
-            <img src={logo} alt="SolarTech Logo" className="h-10 w-10 object-contain" />
-            <span className="text-xl font-bold text-foreground">SolarTech</span>
+            <img src={logo} alt="Solis Energia Solar Logo" className="h-12 w-12 object-contain" />
+            <span className="text-xl font-bold text-foreground">Solis Energia Solar</span>
           </div>
 
           {/* Desktop Navigation */}

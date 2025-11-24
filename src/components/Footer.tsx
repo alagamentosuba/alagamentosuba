@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Linkedin, Mail } from "lucide-react";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,8 +11,8 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="SolarTech Logo" className="h-10 w-10 object-contain" />
-              <span className="text-xl font-bold text-white">SolarTech</span>
+              <img src={logo} alt="Solis Energia Solar Logo" className="h-12 w-12 object-contain" />
+              <span className="text-xl font-bold text-white">Solis Energia Solar</span>
             </div>
             <p className="text-sm text-neutral-400">
               Energia solar para um futuro mais sustentável e econômico.
@@ -52,11 +52,11 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <span>contato@solartech.com.br</span>
+                <span>rafaelhenrique.solis@gmail.com</span>
               </li>
-              <li>(11) 9 9999-9999</li>
-              <li>Av. Paulista, 1000</li>
-              <li>São Paulo, SP</li>
+              <li>(32) 8819-0835</li>
+              <li>Rua Floriano Peixoto, 241</li>
+              <li>Apto 404 Centro - Visconde do Rio Branco</li>
             </ul>
           </div>
 
@@ -91,7 +91,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-neutral-800 text-sm text-center text-neutral-500">
-          <p>© {currentYear} SolarTech. Todos os direitos reservados.</p>
+          <p>© {currentYear} Solis Energia Solar. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

@@ -73,7 +73,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Telefone</h3>
-                <p className="text-neutral-600">(11) 9 9999-9999</p>
+                <p className="text-neutral-600">(32) 8819-0835</p>
               </div>
             </div>
 
@@ -83,7 +83,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                <p className="text-neutral-600">contato@solartech.com.br</p>
+                <p className="text-neutral-600">rafaelhenrique.solis@gmail.com</p>
               </div>
             </div>
 
@@ -93,7 +93,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Endereço</h3>
-                <p className="text-neutral-600">Av. Paulista, 1000 - São Paulo, SP</p>
+                <p className="text-neutral-600">Rua Floriano Peixoto, 241, Apto 404<br />Centro - Visconde do Rio Branco</p>
               </div>
             </div>
 
