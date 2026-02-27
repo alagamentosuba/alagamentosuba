@@ -19,17 +19,26 @@ Sua missão é ler um imenso bloco de notícias rasgadas da internet e identific
 
 Regras de Extração e Resposta:
 1. Ignore qualquer evento que não seja explicitamente dentro do município de Ubá-MG.
-2. Extraia o NOME DA RUA/AVENIDA mais exato possível (Ex: "Avenida Beira-Rio", "MG-447", "Ponte Major Fusaro").
-3. Determine o "status" da via como EXATAMENTE UM DE: "total" (interdição total/inundado), "parcial" (meia pista), "bridge" (risco/queda de ponte).
-4. VOCÊ DEVE RESPONDER UNICA E EXCLUSIVAMENTE COM UM ARRAY JSON VALIDADO. Sem formatação Markdown, sem a palavra "json" no começo, sem saudações.
+2. Determine a "situação" da via como EXATAMENTE UM DE: "total" (interdição total/inundado), "parcial" (meia pista), "bridge" (risco/queda de ponte).
+3. VOCÊ DEVE RESPONDER UNICA E EXCLUSIVAMENTE COM UM ARRAY JSON VALIDADO. Sem formatação Markdown, sem a palavra "json" no começo, sem saudações.
 
 Se não houver nenhum incidente relatado nas notícias providas, retorne exatamente um array vazio:
 []
 
-Se houver 1 ou mais incidentes, retorne exatamente neste formato de Array de Objetos:
+Se houver 1 ou mais incidentes, retorne NESTE EXATO formato (um Array de Objetos com essas exatas 4 chaves em português):
 [
-  { "hasIncident": true, "streetName": "Avenida Governador Valadares", "status": "total" },
-  { "hasIncident": true, "streetName": "Rodovia MG-447", "status": "parcial" }
+  { 
+    "rua": "Avenida Governador Valadares", 
+    "bairro": "Centro", 
+    "situação": "total", 
+    "observação": "Via completamente alagada próximo à ponte principal, trânsito desviado." 
+  },
+  { 
+    "rua": "Rodovia MG-447", 
+    "bairro": "Zona Rural", 
+    "situação": "parcial", 
+    "observação": "Queda de barreira interditando meia pista no KM 20." 
+  }
 ]
 `;
 
@@ -89,9 +98,17 @@ function startScraper() {
             // 1. Fetch REAL data from local portals (BATCH STRATEGY)
             console.log("-> Harvesting HTML from News Portals...");
             const portalPromises = [
+                // Portais de Notícias Locais Regionais
                 axios.get('https://www.guiamuriae.com.br/noticias/cidade/uba/', { timeout: 10000 }).catch(e => ({ data: "" })),
-                // More sources can be added to this batch array easily without increasing API costs
-                // axios.get('https://ubaempauta.com.br/', { timeout: 10000 }).catch(e => ({ data: "" }))
+                axios.get('https://jornalonoticiario.com.br/categoria/cidade/', { timeout: 10000 }).catch(e => ({ data: "" })),
+                axios.get('https://ubanews.com/', { timeout: 10000 }).catch(e => ({ data: "" })),
+
+                // NOTA TÉCNICA SOBRE INSTAGRAM (Prefeito, Vice-Prefeito, PMRv):
+                // O Instagram bloqueia acessos via "Axios" retornando a página de Login ao invés da postagem.
+                // Para ler o Instagram do Vice Prefeito diretamente aqui, precisaremos de 2 caminhos no futuro:
+                // 1. Usar a API Oficial do Facebook Graph (Requer aprovação burocrática da Meta).
+                // 2. Usar um serviço de Web Crawling Headless (ex: Apify Instagram Scraper / Puppeteer).
+                // Por hora, manteremos o foco em portais abertos jornalísticos e sites oficiais.
             ];
 
             const results = await Promise.all(portalPromises);
@@ -119,11 +136,12 @@ function startScraper() {
 
                 // 4. Update the Database iteratively for each valid finding
                 incidentArray.forEach(nlpResult => {
-                    if (!nlpResult.hasIncident || !nlpResult.streetName) return;
+                    // Check for the new Portuguese keys
+                    if (!nlpResult.rua || !nlpResult.situação) return;
 
-                    db.get('SELECT id FROM Streets WHERE name LIKE ?', [`%${nlpResult.streetName}%`], (err, street) => {
+                    db.get('SELECT id FROM Streets WHERE name LIKE ?', [`%${nlpResult.rua}%`], (err, street) => {
                         if (err || !street) {
-                            console.log(`⚠️ Kimi found incident, but street '${nlpResult.streetName}' is not in Database Map.`);
+                            console.log(`⚠️ Kimi found incident, but street '${nlpResult.rua}' is not in Database Map.`);
                             return;
                         }
 
@@ -131,17 +149,19 @@ function startScraper() {
                         db.get('SELECT id FROM Reports WHERE streetId = ?', [street.id], (err, report) => {
                             if (err) return;
 
+                            const finalDesc = `[Bairro: ${nlpResult.bairro}] ${nlpResult.observação} (Extraído via Inteligência Artificial)`;
+
                             if (report) {
                                 // Validate existing community report
-                                db.run('UPDATE Reports SET isOfficial = 1, status = ? WHERE id = ?', [nlpResult.status, report.id]);
-                                console.log(`✅ [Validation] Community report validation confirmed for ${nlpResult.streetName}!`);
+                                db.run('UPDATE Reports SET isOfficial = 1, status = ?, description = ? WHERE id = ?', [nlpResult.situação, finalDesc, report.id]);
+                                console.log(`✅ [Validation] Community report validation confirmed for ${nlpResult.rua}!`);
                             } else {
                                 // Create brand new official auto-report
                                 db.run(
                                     "INSERT INTO Reports (streetId, userId, status, description, isOfficial) VALUES (?, NULL, ?, ?, 1)",
-                                    [street.id, nlpResult.status, "Extração via IA Kimi K2.5 dos portais locais."]
+                                    [street.id, nlpResult.situação, finalDesc]
                                 );
-                                console.log(`📝 [Auto-Post] Kimi system created an Official Alert for ${nlpResult.streetName}.`);
+                                console.log(`📝 [Auto-Post] Kimi system created an Official Alert for ${nlpResult.rua}.`);
                             }
                         });
                     });
