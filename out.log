@@ -1,0 +1,84 @@
+🚀 Iniciando Teste do Puppeteer Local...
+-> [RSS+Puppeteer] Harvesting Social Media (X XML + Instagram Authenticated)...
+   * Scraping RSS: Câmara Municipal Ubá (X)
+Connected to the SQLite database.
+Database tables verified.
+   ⚠️ Failed to load RSS Câmara Municipal Ubá (X): Request failed with status code 403
+   * Scraping RSS: PMRv (X)
+   ⚠️ Failed to load RSS PMRv (X): Request failed with status code 403
+   * Launching Stealth Chromium for Instagram...
+   * Not logged in. Using static credentials...
+   📸 Diagnostic screenshot saved as ig_login_screen_debug.png
+   * Waiting for any text input to appear...
+   * Emulating native keystrokes to bypass React state monitors...
+   * Credentials native typed.
+   * Clicked login button. Securing session...
+   📸 Diagnostic screenshot saved as ig_after_login.png
+   * Session saved successfully to ig_cookies.json !
+   * Scraping Instagram: Vice-Prefeito (IG)
+   * Scraping Instagram: Prefeito Damato (IG)
+   * Scraping Instagram: Prefeitura de Ubá (IG)
+   * Scraping Instagram: PMRv (IG)
+
+==================== RESULTADO FINAL ====================
+
+--- REDE SOCIAL (IG): Vice-Prefeito (IG) ---
+Sorry, this page isn't available.
+The link you followed may be broken, or the page may have been removed. Go back to Instagram.
+
+--- REDE SOCIAL (IG): Prefeito Damato (IG) ---
+professorjosedamato
+Professor José Damato
+1,118 posts
+42.1K followers
+6,361 following
+🙎‍♂️Prefeito de Ubá (2025/2028)
+👨🏻‍🏫 Professor, Mestre, Doutor e PhD
+🔎 Vereador mais votado 2021/2024
+🤝 Trabalho e dedic... 
+more
+professorjosedamato.com.br
+Followed by renan.morforio, felipem.abranches + 2 more
+Follow
+Message
+❤️🙏
+😂😂😂
+COM VOCÊS ❤️
+Viagens
+Apoiadores
+Propostas
+Turmas/alunos
+Sobre mim
+
+--- REDE SOCIAL (IG): Prefeitura de Ubá (IG) ---
+ubaprefeitura
+Prefeitura de Ubá
+4,069 posts
+67.1K followers
+55 following
+City Hall
+Av. Comendador Jacinto Soares de Souza Lima, nº 250 - 2º Andar, Centro, Ubá 36500-091
+uba.mg.gov.br
+Followed by jonathan.almeida93, renan.morforio + 6 more
+Follow
+Message
+ENCHENTE
+Saúde
+Educação
+Informativos
+Social
+Obras
+Cultura
+Ambiente
+Ubá 168 anos
+Administração
+Esportes
+Defesa Civil
+
+--- REDE SOCIAL (IG): PMRv (IG) ---
+Sorry, this page isn't available.
+The link you followed may be broken, or the page may have been removed. Go back to Instagram.
+
+=========================================================
+
+✅ Feche com CTRL+C

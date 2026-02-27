@@ -18,6 +18,7 @@ function getStatusClass(status) {
     if (status === 'total') return 'status-total';
     if (status === 'parcial') return 'status-parcial';
     if (status === 'bridge') return 'status-bridge';
+    if (status === 'doacao') return 'status-doacao';
     return '';
 }
 
@@ -25,6 +26,7 @@ function getStatusText(status) {
     if (status === 'total') return 'Interdição Total';
     if (status === 'parcial') return 'Interdição Parcial';
     if (status === 'bridge') return 'Ponte/Risco';
+    if (status === 'doacao') return 'Ponto de Doação';
     return 'Alerta';
 }
 
@@ -32,9 +34,11 @@ function createCustomIcon(status, isOfficial, authorRole) {
     const statusClass = getStatusClass(status);
     const isAuthority = (authorRole === 'admin' || authorRole === 'big_boss');
 
-    // Authorities get a crown, community unverified get an asterisk
+    // Authorities get a crown, community unverified get an asterisk, donation points get clover
     let overlay = '';
-    if (isAuthority || isOfficial) {
+    if (status === 'doacao') {
+        overlay = '<span style="font-size:16px; line-height:0; display:block; transform:translateY(1px);">🍀</span>';
+    } else if (isAuthority || isOfficial) {
         overlay = '<span style="color:#fbbf24; font-size:16px; font-weight:bold; line-height:0; display:block; transform:translateY(6px); text-shadow: 0 0 2px black;">👑</span>';
     } else {
         overlay = '<span style="color:#ffffff; font-size:24px; font-weight:bold; line-height:0; display:block; transform:translateY(6px);">*</span>';
@@ -52,12 +56,14 @@ function createCustomIcon(status, isOfficial, authorRole) {
     });
 }
 
-// Global user state
+// Global user state and cache
 let currentUser = null;
+let allStreets = [];
 
 // Initialization
 async function initApp() {
     await checkAuth();
+    await loadStreets();
     await loadMapData();
     setupFormEvents();
 }
@@ -153,6 +159,15 @@ async function loadMapData() {
         document.getElementById('last-updated').innerText = now.toLocaleString('pt-BR');
     } catch (error) {
         console.error('Error fetching interdictions data:', error);
+    }
+}
+
+async function loadStreets() {
+    try {
+        const res = await fetch('/api/streets/all');
+        allStreets = await res.json();
+    } catch (e) {
+        console.error("Failed to load streets:", e);
     }
 }
 
@@ -331,36 +346,38 @@ function setupFormEvents() {
     }
 
     // Autocomplete Dropdown Logic
-    searchInput.addEventListener('input', async (e) => {
-        const q = e.target.value;
+    searchInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         if (q.length < 2) {
             dropdown.style.display = 'none';
             return;
         }
 
-        try {
-            const res = await fetch(`/api/streets/search?q=${encodeURIComponent(q)}`);
-            const streets = await res.json();
+        const words = q.split(/\s+/).filter(w => w.length > 0);
 
-            dropdown.innerHTML = '';
-            if (streets.length > 0) {
-                dropdown.style.display = 'block';
-                streets.forEach(s => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.textContent = s.name;
-                    div.onclick = async () => {
-                        searchInput.value = s.name;
-                        hiddenId.value = s.id;
-                        dropdown.style.display = 'none';
-                        await prepareStreetSelection(s.id);
-                    };
-                    dropdown.appendChild(div);
-                });
-            } else {
-                dropdown.style.display = 'none';
-            }
-        } catch (e) { console.error(e); }
+        const filtered = allStreets.filter(s => {
+            const sName = s.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return words.every(w => sName.includes(w));
+        }).slice(0, 20);
+
+        dropdown.innerHTML = '';
+        if (filtered.length > 0) {
+            dropdown.style.display = 'block';
+            filtered.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = s.name;
+                div.onclick = async () => {
+                    searchInput.value = s.name;
+                    hiddenId.value = s.id;
+                    dropdown.style.display = 'none';
+                    await prepareStreetSelection(s.id);
+                };
+                dropdown.appendChild(div);
+            });
+        } else {
+            dropdown.style.display = 'none';
+        }
     });
 
     // Close dropdown on click outside

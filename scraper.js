@@ -1,6 +1,12 @@
 const cron = require('node-cron');
 const db = require('./db');
 const axios = require('axios');
+const fs = require('fs');
+
+// Puppeteer Stealth Framework
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 // Kimi K2.5 NLP Analysis via NVIDIA NIM API
 async function analyzeTextWithKimi(batchText) {
@@ -89,30 +95,144 @@ Se houver 1 ou mais incidentes, retorne NESTE EXATO formato (um Array de Objetos
 
 // Puppeteer Headless: Social Media Scraper
 async function scrapeSocialMedia() {
-    console.log("-> [RSS/XML] Harvesting Social Media (X/Twitter via Nitter)...");
+    console.log("-> [RSS+Puppeteer] Harvesting Social Media (X XML + Instagram Authenticated)...");
     let socialText = "";
 
-    // Nitter exposes clean XML RSS feeds that we can download instantly via Axios 
-    // without the massive RAM overhead of Chromium or Meta/X Login Blocks.
-    const targets = [
+    // 1. Lightning Fast Nitter XML (X/Twitter)
+    const rssTargets = [
         { name: "Câmara Municipal Ubá (X)", url: "https://nitter.poast.org/CamaraUba/rss" },
         { name: "PMRv (X)", url: "https://nitter.poast.org/pmrvmg/rss" }
     ];
 
-    for (const target of targets) {
+    for (const target of rssTargets) {
         try {
             console.log(`   * Scraping RSS: ${target.name}`);
             const response = await axios.get(target.url, { timeout: 10000 });
-
-            // X/Twitter RSS feeds wrap the tweet text inside <title> and <description> tags
-            // We just extract the raw XML and slice it to get the newest 10 tweets
             const rawXml = response.data;
             const strippedText = rawXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-
             socialText += `\n--- REDE SOCIAL (X): ${target.name} ---\n${strippedText.substring(0, 1500)}\n`;
         } catch (err) {
             console.log(`   ⚠️ Failed to load RSS ${target.name}: ${err.message}`);
         }
+    }
+
+    // 2. Heavy Puppeteer (Instagram Authenticated)
+    console.log("   * Launching Stealth Chromium for Instagram...");
+    let browser;
+    try {
+        browser = await puppeteer.launch({
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        });
+
+        const page = await browser.newPage();
+        await page.setViewport({ width: 1366, height: 768 });
+
+        const cookiesPath = './ig_cookies.json';
+        if (fs.existsSync(cookiesPath)) {
+            const cookiesString = fs.readFileSync(cookiesPath);
+            const cookies = JSON.parse(cookiesString);
+            await page.setCookie(...cookies);
+            console.log("   * Loaded saved Meta cookies.");
+        }
+
+        // Navigate to Instagram to see if we are logged in
+        await page.goto('https://www.instagram.com/', { waitUntil: 'networkidle2', timeout: 30000 });
+
+        // Wait a bit for React to render
+        await new Promise(r => setTimeout(r, 4000));
+
+        let pageCookies = await page.cookies();
+        let isLoggedIn = pageCookies.some(c => c.name === 'sessionid');
+
+        if (!isLoggedIn) {
+            console.log("   * Not logged in. Using static credentials...");
+            await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2', timeout: 30000 });
+
+            // Wait a bit for React to hydrate and take a diagnostic screenshot
+            await new Promise(r => setTimeout(r, 4000));
+            await page.screenshot({ path: 'ig_login_screen_debug.png' });
+            console.log("   📸 Diagnostic screenshot saved as ig_login_screen_debug.png");
+
+            console.log("   * Waiting for any text input to appear...");
+            await page.waitForFunction(() => document.querySelector('input[name="username"]') || document.querySelector('input[name="email"]') || document.querySelector('input[type="text"]'), { timeout: 15000 });
+
+            console.log("   * Emulating native keystrokes to bypass React state monitors...");
+
+            // Type Username (Supporting standard or Facebook integration names)
+            const userSelector = await page.evaluate(() => document.querySelector('input[name="username"]') ? 'input[name="username"]' : 'input[name="email"]');
+            await page.type(userSelector, 'lucasmorforio.mb@gmail.com', { delay: 85 });
+
+            // Type Password
+            const passSelector = await page.evaluate(() => document.querySelector('input[name="password"]') ? 'input[name="password"]' : 'input[name="pass"]');
+            await page.type(passSelector, '123456instagram', { delay: 85 });
+
+            console.log("   * Credentials native typed.");
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Click Submit
+            await page.evaluate(() => {
+                const btn = document.querySelector('button[type="submit"]') || document.querySelector('input[type="submit"]') || document.querySelector('div[role="button"]:contains("Log in")');
+                if (btn) btn.click();
+            });
+
+            console.log("   * Clicked login button. Securing session...");
+
+            // Poll for the sessionid cookie for up to 20 seconds
+            let retries = 0;
+            while (retries < 10) {
+                await new Promise(r => setTimeout(r, 2000));
+                pageCookies = await page.cookies();
+                isLoggedIn = pageCookies.some(c => c.name === 'sessionid');
+                if (isLoggedIn) break;
+                retries++;
+            }
+
+            // Take diagnostic screenshot after waiting
+            await page.screenshot({ path: 'ig_after_login.png' });
+            console.log("   📸 Diagnostic screenshot saved as ig_after_login.png");
+
+            if (isLoggedIn) {
+                fs.writeFileSync(cookiesPath, JSON.stringify(pageCookies));
+                console.log("   * Session saved successfully to ig_cookies.json !");
+            } else {
+                console.log("   ⚠️ Login failed or timed out. Did not capture sessionid cookie. Check ig_after_login.png");
+            }
+        } else {
+            console.log("   * Logged in using saved cookies! Bypassing security wall.");
+        }
+
+        const targets = [
+            { name: "Vice-Prefeito (IG)", url: "https://www.instagram.com/viceprefeitouba/" },
+            { name: "Prefeito Damato (IG)", url: "https://www.instagram.com/professorjosedamato/" },
+            { name: "Prefeitura de Ubá (IG)", url: "https://www.instagram.com/ubaprefeitura/" },
+            { name: "PMRv (IG)", url: "https://www.instagram.com/pmrvmg/" },
+        ];
+
+        for (const target of targets) {
+            try {
+                console.log(`   * Scraping Instagram: ${target.name}`);
+                await page.goto(target.url, { waitUntil: 'networkidle2', timeout: 20000 });
+
+                await new Promise(r => setTimeout(r, 3000));
+
+                // Extract text directly from the <article> or <main> container to avoid layout noise
+                const text = await page.evaluate(() => {
+                    const article = document.querySelector('article') || document.querySelector('main');
+                    return article ? article.innerText : document.body.innerText;
+                });
+
+                socialText += `\n--- REDE SOCIAL (IG): ${target.name} ---\n${text.substring(0, 1500)}\n`;
+
+            } catch (err) {
+                console.log(`   ⚠️ Failed to load profile ${target.name}: ${err.message}`);
+            }
+        }
+
+    } catch (e) {
+        console.error("❌ [Puppeteer Fatal] Failed to execute authenticated IG script:", e.message);
+    } finally {
+        if (browser) await browser.close();
     }
 
     return socialText;

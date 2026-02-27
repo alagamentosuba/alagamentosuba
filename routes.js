@@ -81,22 +81,9 @@ router.get('/api/map-data', (req, res) => {
     });
 });
 
-// Lookup streets for dropdown
-router.get('/api/streets/search', (req, res) => {
-    let q = req.query.q || '';
-    if (typeof q !== 'string') q = q.toString();
-    const words = q.trim().split(/\s+/).filter(w => w.length > 0);
-
-    if (words.length === 0) {
-        return res.json([]);
-    }
-
-    const conditions = words.map(() => `name LIKE ?`).join(' AND ');
-    const params = words.map(w => `%${w}%`);
-
-    const query = `SELECT id, name FROM Streets WHERE ${conditions} LIMIT 20`;
-
-    db.all(query, params, (err, rows) => {
+// Lookup all streets for client-side local dropdown filtering (lightning fast and bypasses SQLite accent issues)
+router.get('/api/streets/all', (req, res) => {
+    db.all('SELECT id, name FROM Streets', [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });

@@ -15,6 +15,8 @@
     /* Partial interdiction */
     --critical: #8b5cf6;
     /* Bridges / Collapse */
+    --doacao: #10b981;
+    /* Ponto de Doação */
 }
 
 * {
@@ -166,6 +168,10 @@ body {
 
 .color-bridge {
     background-color: var(--critical);
+}
+
+.color-doacao {
+    background-color: var(--doacao);
 }
 
 /* Contacts & Sources */
@@ -428,6 +434,10 @@ body {
 
 .status-bridge {
     background-color: var(--critical);
+}
+
+.status-doacao {
+    background-color: var(--doacao);
 }
 
 /* Responsive */
