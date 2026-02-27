@@ -1,0 +1,14 @@
+🚀 Iniciando Teste do Puppeteer Local...
+-> [RSS/XML] Harvesting Social Media (X/Twitter via Nitter)...
+   * Scraping RSS: Câmara Municipal Ubá (X)
+Connected to the SQLite database.
+Database tables verified.
+   ⚠️ Failed to load RSS Câmara Municipal Ubá (X): Request failed with status code 403
+   * Scraping RSS: PMRv (X)
+   ⚠️ Failed to load RSS PMRv (X): Request failed with status code 403
+
+==================== RESULTADO FINAL ====================
+
+=========================================================
+
+✅ Feche com CTRL+C

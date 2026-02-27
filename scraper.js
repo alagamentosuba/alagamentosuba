@@ -87,6 +87,37 @@ Se houver 1 ou mais incidentes, retorne NESTE EXATO formato (um Array de Objetos
     }
 }
 
+// Puppeteer Headless: Social Media Scraper
+async function scrapeSocialMedia() {
+    console.log("-> [RSS/XML] Harvesting Social Media (X/Twitter via Nitter)...");
+    let socialText = "";
+
+    // Nitter exposes clean XML RSS feeds that we can download instantly via Axios 
+    // without the massive RAM overhead of Chromium or Meta/X Login Blocks.
+    const targets = [
+        { name: "Câmara Municipal Ubá (X)", url: "https://nitter.poast.org/CamaraUba/rss" },
+        { name: "PMRv (X)", url: "https://nitter.poast.org/pmrvmg/rss" }
+    ];
+
+    for (const target of targets) {
+        try {
+            console.log(`   * Scraping RSS: ${target.name}`);
+            const response = await axios.get(target.url, { timeout: 10000 });
+
+            // X/Twitter RSS feeds wrap the tweet text inside <title> and <description> tags
+            // We just extract the raw XML and slice it to get the newest 10 tweets
+            const rawXml = response.data;
+            const strippedText = rawXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+            socialText += `\n--- REDE SOCIAL (X): ${target.name} ---\n${strippedText.substring(0, 1500)}\n`;
+        } catch (err) {
+            console.log(`   ⚠️ Failed to load RSS ${target.name}: ${err.message}`);
+        }
+    }
+
+    return socialText;
+}
+
 // Main Cron Job Logic - Batch Strategy
 function startScraper() {
     console.log('Automated Scraping Engine Initialized (Kimi K2.5). Running every 30 mins.');
@@ -121,6 +152,10 @@ function startScraper() {
                     aggregatedHTML += `\n--- FONTE ${index + 1} ---\n` + res.data.substring(0, 8000);
                 }
             });
+
+            // 2.5 Run Puppeteer Headless to grab Instagram texts bypassing Meta's login wall
+            const socialMediaText = await scrapeSocialMedia();
+            aggregatedHTML += `\n${socialMediaText}\n`;
 
             if (aggregatedHTML.length < 50) {
                 console.log("⚠️ Batch harvest failed or is empty, skipping cycle.");
@@ -176,4 +211,4 @@ function startScraper() {
     });
 }
 
-module.exports = { startScraper };
+module.exports = { startScraper, scrapeSocialMedia };
