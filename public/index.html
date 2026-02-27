@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interdições de Vias – Ubá MG</title>
+
+    <!-- Meta tags for SEO & Sharing -->
+    <meta name="description"
+        content="Acompanhe o mapa em tempo real das interdições de vias, pontes e estradas em Ubá-MG causadas pelas fortes chuvas de fevereiro de 2026. Atualizações da Defesa Civil e PMRv.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <div class="warning-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Alerta Ativo</span>
+                </div>
+                <h1>Interdições de Vias</h1>
+                <p class="subtitle">Ubá – MG | Chuvas de 2026</p>
+                <p class="description">
+                    Mapa de monitoramento da mobilidade em Ubá. Acompanhe os pontos de interdição total e parcial
+                    informados pela Defesa Civil, PMRv e notícias locais.
+                </p>
+            </header>
+
+            <div class="legend-section">
+                <h3>Legenda do Mapa</h3>
+                <ul class="legend-list">
+                    <li>
+                        <span class="legend-color color-total"></span>
+                        <span class="legend-text">Interdição Total</span>
+                    </li>
+                    <li>
+                        <span class="legend-color color-parcial"></span>
+                        <span class="legend-text">Interdição Parcial</span>
+                    </li>
+                    <li>
+                        <span class="legend-color color-bridge"></span>
+                        <span class="legend-text">Ponte com Risco/Colapsada</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="emergency-contacts">
+                <h3>Telefones Úteis</h3>
+                <ul>
+                    <li>Defesa Civil: <strong>199</strong></li>
+                    <li>Corpo de Bombeiros: <strong>193</strong></li>
+                    <li>Polícia Militar Rodoviária: <strong>190</strong> ou (32) 3531-4952</li>
+                </ul>
+            </div>
+
+            <div class="sources-section">
+                <h3>Fontes de Consulta</h3>
+                <div class="source-buttons">
+                    <a href="https://www.instagram.com/professorjosedamato/" target="_blank" rel="noopener"
+                        class="btn-source">Prefeito Prof. José Damato</a>
+                    <a href="https://www.instagram.com/ubaprefeitura/" target="_blank" rel="noopener"
+                        class="btn-source">Pref. Ubá (Instagram)</a>
+                    <a href="https://www.uba.mg.gov.br/materias" target="_blank" rel="noopener" class="btn-source">Pref.
+                        Ubá (Site Oficial)</a>
+                    <a href="https://www.policiamilitar.mg.gov.br/" target="_blank" rel="noopener"
+                        class="btn-source">Polícia Militar MG (PMMG/PMRv)</a>
+                    <a href="http://www.defesacivil.mg.gov.br/" target="_blank" rel="noopener" class="btn-source">Defesa
+                        Civil MG</a>
+                </div>
+            </div>
+
+            <div class="community-feed">
+                <h3>Reporte um Problema</h3>
+
+                <div id="auth-section">
+                    <p class="temp-msg">O relato comunitário exige login para prevenir abusos contra as equipes de
+                        salvamento.</p>
+                    <a href="/auth/google" class="btn-google">Entrar com Google</a>
+                </div>
+
+                <div id="report-form" style="display: none;">
+                    <div class="user-info">
+                        <img id="user-avatar" src="" alt="Avatar">
+                        <span id="user-name"></span>
+                        <a href="/auth/logout" class="btn-logout">Sair</a>
+                    </div>
+
+                    <!-- Painel Administrativo Oculto (Apenas Admin/Big-Boss) -->
+                    <div id="admin-panel"
+                        style="display: none; padding: 15px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 20px;">
+                        <h3
+                            style="color: #60a5fa; font-size: 0.9rem; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 1.1rem;">👑</span> PAINEL ADMINISTRATIVO
+                        </h3>
+                        <div style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 10px;">Gestão de Logradouros
+                            Oficial</div>
+
+                        <form id="add-street-form" style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="new-street-name" placeholder="Nome da Rua (Ex: Praça Guido)" required
+                                style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
+                            <button type="submit"
+                                style="padding: 8px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Cadastrar
+                                Via e Mapear (IA)</button>
+                        </form>
+
+                        <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0;">
+
+                        <form id="delete-street-form" style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="delete-street-id" placeholder="ID da Rua para excluir" required
+                                style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
+                            <button type="submit"
+                                style="padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Excluir
+                                Permanentemente</button>
+                        </form>
+                    </div>
+
+                    <form id="street-report-form">
+                        <label for="street-search">Logradouro:</label>
+                        <div style="position: relative;">
+                            <input type="text" id="street-search" placeholder="Busque a rua..." autocomplete="off"
+                                required>
+                            <div id="street-dropdown" class="dropdown-list"></div>
+                        </div>
+                        <input type="hidden" id="selected-street-id">
+
+                        <label for="status-select">Situação:</label>
+                        <select id="status-select" required>
+                            <option value="">Selecione o alerta...</option>
+                            <option value="total">Interdição Total</option>
+                            <option value="parcial">Interdição Parcial / Água Secando</option>
+                            <option value="bridge">Ponte com Risco</option>
+                        </select>
+
+                        <div id="marker-instruction"
+                            style="display:none; color:var(--accent); font-weight:bold; font-size:0.85rem; padding: 10px 0; line-height:1.4;">
+                            🗺️ Modo de Seleção Ativo: A rua está destacada no mapa. Clique diretamente na linha azul
+                            para marcar o ponto exato do problema (até 3).
+                        </div>
+                        <ul id="selected-points-list"
+                            style="list-style:none; padding:0; font-size:0.8rem; margin-bottom:10px; color:#9ca3af;">
+                        </ul>
+
+                        <button type="submit" class="btn-submit" id="submit-report-btn">Enviar Alerta</button>
+                    </form>
+                </div>
+            </div>
+
+            <footer class="sidebar-footer">
+                <p>Atualizado pela última vez: <span id="last-updated">26/02/2026 21:00</span></p>
+                <p class="disclaimer">Sempre siga as orientações locais antes de sair de casa.</p>
+            </footer>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="map-area">
+            <div id="uba-map"></div>
+        </main>
+
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+
+</html>

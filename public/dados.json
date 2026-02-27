@@ -1,0 +1,56 @@
+[
+    {
+        "id": "1",
+        "title": "MGC-120 - Km 706",
+        "description": "Rodovia com interdição total por alagamento. Ponte submersa devido ao transbordamento do rio. Desvio pela zona rural de Visconde do Rio Branco.",
+        "status": "total",
+        "lat": -21.1215,
+        "lng": -42.9427,
+        "source": "21º BPM"
+    },
+    {
+        "id": "2",
+        "title": "Ponte Major Siqueira",
+        "description": "Acesso pela Avenida Cristiano Roças está totalmente interditado. Risco estrutural e danos após a enchente.",
+        "status": "bridge",
+        "lat": -21.12356,
+        "lng": -42.94520,
+        "source": "Prefeito José Damato"
+    },
+    {
+        "id": "3",
+        "title": "MG-447 - Km 1",
+        "description": "Colapso de ponte nos dois sentidos. O desvio é realizado por bairros adjacentes.",
+        "status": "bridge",
+        "lat": -21.1350,
+        "lng": -42.9215,
+        "source": "PMRv"
+    },
+    {
+        "id": "4",
+        "title": "MG-447 - Km 8",
+        "description": "Pista bloqueada devido a forte erosão do pavimento asfáltico num trecho crítico entre Ubá e Visconde do Rio Branco.",
+        "status": "total",
+        "lat": -21.0850,
+        "lng": -42.8950,
+        "source": "PMRv"
+    },
+    {
+        "id": "5",
+        "title": "Avenida Beira-Rio",
+        "description": "Trechos interditados parcialmente e temporariamente para limpeza de lama e entulhos realizados pelo Exército e Prefeitura.",
+        "status": "parcial",
+        "lat": -21.1200,
+        "lng": -42.9400,
+        "source": "Guia Muriaé"
+    },
+    {
+        "id": "6",
+        "title": "Ponte Major Fusaro",
+        "description": "Localizada no bairro Gelovita. Tráfego totalmente interditado devido a danos na estrutura da cabeceira.",
+        "status": "bridge",
+        "lat": -21.1150,
+        "lng": -42.9500,
+        "source": "Prefeitura de Ubá"
+    }
+]
