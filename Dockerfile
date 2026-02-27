@@ -13,8 +13,5 @@ RUN npm ci
 # Copia todo o código fonte para dentro do container
 COPY . .
 
-# Expõe a porta que a aplicação vai rodar
-EXPOSE 3000
-
 # Comando para iniciar o servidor
 CMD ["npm", "start"]
