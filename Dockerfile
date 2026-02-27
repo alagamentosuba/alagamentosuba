@@ -1,5 +1,5 @@
-# Usa uma imagem oficial leve do Node.js
-FROM node:20-alpine
+# Usa uma imagem oficial completa do Node.js (Evita conflitos de C++ do SQLite no Alpine)
+FROM node:20
 
 # Define o diretório de trabalho dentro do container (Longe da pasta /app que causou colisão)
 WORKDIR /var/www
