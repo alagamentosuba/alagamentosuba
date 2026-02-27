@@ -91,11 +91,17 @@ async function checkAuth() {
                 if (bbs) bbs.style.display = 'block';
             }
         } else {
+            // User is not logged in (e.g., 401). Do NOT parse JSON. Display auth UI.
+            currentUser = null;
             document.getElementById('auth-section').style.display = 'block';
             document.getElementById('report-form').style.display = 'none';
         }
     } catch (e) {
-        console.error("Auth check failed.", e);
+        // Network error (e.g., server offline). Do NOT crash the app.
+        console.warn("Auth check network error:", e);
+        currentUser = null;
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('report-form').style.display = 'none';
     }
 }
 
