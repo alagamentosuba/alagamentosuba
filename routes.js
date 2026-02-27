@@ -261,4 +261,41 @@ router.delete('/api/reports/:id', (req, res) => {
     });
 });
 
+// Big-Boss Only: Promover E-mail a Admin Autoridade (Ghost Account Handler)
+router.post('/api/admins', (req, res) => {
+    if (!req.isAuthenticated()) return res.status(401).json({ error: 'Faça login primeiro.' });
+    if (req.user.role !== 'big_boss') return res.status(403).json({ error: 'Acesso Negado. Apenas o Big-Boss pode nomear Autoridades.' });
+
+    const { email } = req.body;
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'E-mail inválido fornecido.' });
+
+    const targetEmail = email.toLowerCase().trim();
+
+    // Check if user already exists
+    db.get('SELECT id, role FROM Users WHERE email = ?', [targetEmail], (err, user) => {
+        if (err) return res.status(500).json({ error: 'Erro de Banco de Dados.' });
+
+        if (user) {
+            // User exists, just update role
+            if (user.role === 'big_boss') return res.status(400).json({ error: 'Este usuário já é o dono do sistema.' });
+
+            db.run("UPDATE Users SET role = 'admin' WHERE id = ?", [user.id], function (updateErr) {
+                if (updateErr) return res.status(500).json({ error: 'Erro ao promover conta existente.' });
+                return res.json({ success: true, message: 'Usuário promovido! Ele agora é uma Autoridade (👑).' });
+            });
+        } else {
+            // User does not exist, create a GHOST ACCOUNT pre-loaded with 'admin' role
+            // googleId, name and photoUrl are NULL for now. When they login, Passport bridges the gap.
+            db.run(
+                "INSERT INTO Users (email, role, isBanned) VALUES (?, 'admin', 0)",
+                [targetEmail],
+                function (insertErr) {
+                    if (insertErr) return res.status(500).json({ error: 'Erro ao criar conta administrativa fantasma.' });
+                    return res.json({ success: true, message: 'Conta Oculta ativada! Quando este e-mail logar a primeira vez, já nascerá Autoridade.' });
+                }
+            );
+        }
+    });
+});
+
 module.exports = router;

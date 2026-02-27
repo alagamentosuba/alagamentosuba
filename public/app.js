@@ -82,6 +82,10 @@ async function checkAuth() {
             if (currentUser.role === 'admin' || currentUser.role === 'big_boss') {
                 document.getElementById('admin-panel').style.display = 'block';
             }
+            if (currentUser.role === 'big_boss') {
+                const bbs = document.getElementById('big-boss-only-section');
+                if (bbs) bbs.style.display = 'block';
+            }
         } else {
             document.getElementById('auth-section').style.display = 'block';
             document.getElementById('report-form').style.display = 'none';
@@ -257,6 +261,30 @@ function setupFormEvents() {
     // Admin Forms
     const addStreetForm = document.getElementById('add-street-form');
     const deleteStreetForm = document.getElementById('delete-street-form');
+    const addAdminForm = document.getElementById('add-admin-form');
+
+    if (addAdminForm) {
+        addAdminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('new-admin-email').value;
+            if (!confirm(`Tornar ${email} um Administrador Oficial do mapa?`)) return;
+
+            try {
+                const res = await fetch('/api/admins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    alert(result.message);
+                    addAdminForm.reset();
+                } else {
+                    alert(result.error || "Erro ao promover usuário.");
+                }
+            } catch (e) { alert("Erro de conexão ao promover usuário."); }
+        });
+    }
 
     if (addStreetForm) {
         addStreetForm.addEventListener('submit', async (e) => {
