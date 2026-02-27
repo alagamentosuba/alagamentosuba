@@ -1,8 +1,8 @@
 # Usa uma imagem oficial leve do Node.js
 FROM node:20-alpine
 
-# Define o diretório de trabalho dentro do container
-WORKDIR /app
+# Define o diretório de trabalho dentro do container (Longe da pasta /app que causou colisão)
+WORKDIR /var/www
 
 # Copia os arquivos de dependência primeiro para aproveitar o cache do Docker
 COPY package.json package-lock.json ./
