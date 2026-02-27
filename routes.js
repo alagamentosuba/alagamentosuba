@@ -81,9 +81,33 @@ router.get('/api/map-data', (req, res) => {
     });
 });
 
-// Lookup all streets for client-side local dropdown filtering (lightning fast and bypasses SQLite accent issues)
-router.get('/api/streets/all', (req, res) => {
-    db.all('SELECT id, name FROM Streets', [], (err, rows) => {
+// Lookup streets for dropdown handling both accented (raw) and non-accented (q) inputs
+router.get('/api/streets/search', (req, res) => {
+    let q = req.query.q || '';
+    let raw = req.query.raw || q; // fallback
+
+    if (typeof q !== 'string') q = q.toString();
+    if (typeof raw !== 'string') raw = raw.toString();
+
+    const wordsQ = q.trim().split(/\s+/).filter(w => w.length > 0);
+    const wordsRaw = raw.trim().split(/\s+/).filter(w => w.length > 0);
+
+    if (wordsQ.length === 0) {
+        return res.json([]);
+    }
+
+    // Build conditions checking both the raw word AND the normalized word (SQLite doesn't natively do accent-blind searches well)
+    const conditions = [];
+    const params = [];
+
+    for (let i = 0; i < wordsQ.length; i++) {
+        conditions.push(`(name LIKE ? OR name LIKE ?)`);
+        params.push(`%${wordsQ[i]}%`, `%${wordsRaw[i] || wordsQ[i]}%`);
+    }
+
+    const query = `SELECT id, name FROM Streets WHERE ${conditions.join(' AND ')} LIMIT 30`;
+
+    db.all(query, params, (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });

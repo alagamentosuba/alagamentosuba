@@ -56,14 +56,12 @@ function createCustomIcon(status, isOfficial, authorRole) {
     });
 }
 
-// Global user state and cache
+// Global user state
 let currentUser = null;
-let allStreets = [];
 
 // Initialization
 async function initApp() {
     await checkAuth();
-    await loadStreets();
     await loadMapData();
     setupFormEvents();
 }
@@ -159,15 +157,6 @@ async function loadMapData() {
         document.getElementById('last-updated').innerText = now.toLocaleString('pt-BR');
     } catch (error) {
         console.error('Error fetching interdictions data:', error);
-    }
-}
-
-async function loadStreets() {
-    try {
-        const res = await fetch('/api/streets/all');
-        allStreets = await res.json();
-    } catch (e) {
-        console.error("Failed to load streets:", e);
     }
 }
 
@@ -346,38 +335,39 @@ function setupFormEvents() {
     }
 
     // Autocomplete Dropdown Logic
-    searchInput.addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    searchInput.addEventListener('input', async (e) => {
+        // Send both the raw text and the accent-stripped normalized text to help SQLite matching
+        const rawQ = e.target.value;
+        const q = rawQ.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
         if (q.length < 2) {
             dropdown.style.display = 'none';
             return;
         }
 
-        const words = q.split(/\s+/).filter(w => w.length > 0);
+        try {
+            const res = await fetch(`/api/streets/search?q=${encodeURIComponent(q)}&raw=${encodeURIComponent(rawQ)}`);
+            const streets = await res.json();
 
-        const filtered = allStreets.filter(s => {
-            const sName = s.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            return words.every(w => sName.includes(w));
-        }).slice(0, 20);
-
-        dropdown.innerHTML = '';
-        if (filtered.length > 0) {
-            dropdown.style.display = 'block';
-            filtered.forEach(s => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.textContent = s.name;
-                div.onclick = async () => {
-                    searchInput.value = s.name;
-                    hiddenId.value = s.id;
-                    dropdown.style.display = 'none';
-                    await prepareStreetSelection(s.id);
-                };
-                dropdown.appendChild(div);
-            });
-        } else {
-            dropdown.style.display = 'none';
-        }
+            dropdown.innerHTML = '';
+            if (streets.length > 0) {
+                dropdown.style.display = 'block';
+                streets.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'dropdown-item';
+                    div.textContent = s.name;
+                    div.onclick = async () => {
+                        searchInput.value = s.name;
+                        hiddenId.value = s.id;
+                        dropdown.style.display = 'none';
+                        await prepareStreetSelection(s.id);
+                    };
+                    dropdown.appendChild(div);
+                });
+            } else {
+                dropdown.style.display = 'none';
+            }
+        } catch (e) { console.error(e); }
     });
 
     // Close dropdown on click outside
