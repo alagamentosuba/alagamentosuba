@@ -275,11 +275,6 @@ map.on('click', function (e) {
 
 function setupFormEvents() {
     console.log("[DEBUG] setupFormEvents execution started");
-    const searchInput = document.getElementById('street-search');
-    console.log("[DEBUG] searchInput element:", !!searchInput);
-    const dropdown = document.getElementById('street-dropdown');
-    const hiddenId = document.getElementById('selected-street-id');
-    const form = document.getElementById('street-report-form');
 
     // Admin Forms
     const addStreetForm = document.getElementById('add-street-form');
