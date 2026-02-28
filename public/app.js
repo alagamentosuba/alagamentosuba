@@ -41,7 +41,7 @@ function createCustomIcon(status, isOfficial, authorRole) {
     if (status === 'doacao') {
         overlay = '<span style="font-size:16px; line-height:0; display:block; transform:translateY(1px);">🍀</span>';
     } else if (status === 'need_help') {
-        overlay = '<span style="font-size:16px; line-height:0; display:block; transform:translateY(1px);">🆘</span>';
+        overlay = ''; // Removed SOS emoji to make the white circle cleaner
     } else if (isAuthority || isOfficial) {
         overlay = '<span style="color:#fbbf24; font-size:16px; font-weight:bold; line-height:0; display:block; transform:translateY(6px); text-shadow: 0 0 2px black;">👑</span>';
     } else {
