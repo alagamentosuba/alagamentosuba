@@ -38,7 +38,28 @@ function createTables() {
             name TEXT UNIQUE,
             lat REAL,
             lng REAL
-        )`);
+        )`, (err) => {
+            if (!err) {
+                db.get('SELECT COUNT(*) as count FROM Streets', [], (cerr, row) => {
+                    if (!cerr && row.count === 0) {
+                        try {
+                            const fs = require('fs');
+                            const path = require('path');
+                            const streetsFile = path.join(__dirname, 'streets.json');
+                            if (fs.existsSync(streetsFile)) {
+                                const streetsData = JSON.parse(fs.readFileSync(streetsFile, 'utf8'));
+                                const insertStmt = db.prepare('INSERT INTO Streets (name, lat, lng) VALUES (?, ?, ?)');
+                                streetsData.forEach(s => insertStmt.run(s.name, s.lat, s.lng));
+                                insertStmt.finalize();
+                                console.log(`Auto-seeded ${streetsData.length} streets from JSON payload!`);
+                            }
+                        } catch (e) {
+                            console.error('Failed to auto-seed streets:', e.message);
+                        }
+                    }
+                });
+            }
+        });
 
         // Reports table (Community or Official alerts)
         db.run(`CREATE TABLE IF NOT EXISTS Reports (
