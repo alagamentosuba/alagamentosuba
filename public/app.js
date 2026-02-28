@@ -61,9 +61,13 @@ let currentUser = null;
 
 // Initialization
 async function initApp() {
+    console.log("[DEBUG] initApp started");
     await checkAuth();
+    console.log("[DEBUG] checkAuth finished");
     await loadMapData();
+    console.log("[DEBUG] loadMapData finished");
     setupFormEvents();
+    console.log("[DEBUG] setupFormEvents finished");
 }
 
 async function checkAuth() {
@@ -73,7 +77,8 @@ async function checkAuth() {
             const data = await res.json();
             currentUser = data.user;
             document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('report-form').style.display = 'block';
+            document.getElementById('user-info-section').style.display = 'block';
+            document.getElementById('forms-container').style.display = 'block';
 
             // Format name with Role
             let displayRole = currentUser.role === 'big_boss' ? 'Big-Boss' : (currentUser.role === 'admin' ? 'Admin' : 'Morador');
@@ -94,14 +99,16 @@ async function checkAuth() {
             // User is not logged in (e.g., 401). Do NOT parse JSON. Display auth UI.
             currentUser = null;
             document.getElementById('auth-section').style.display = 'block';
-            document.getElementById('report-form').style.display = 'none';
+            document.getElementById('user-info-section').style.display = 'none';
+            document.getElementById('forms-container').style.display = 'none';
         }
     } catch (e) {
         // Network error (e.g., server offline). Do NOT crash the app.
         console.warn("Auth check network error:", e);
         currentUser = null;
         document.getElementById('auth-section').style.display = 'block';
-        document.getElementById('report-form').style.display = 'none';
+        document.getElementById('user-info-section').style.display = 'none';
+        document.getElementById('forms-container').style.display = 'none';
     }
 }
 
@@ -263,7 +270,9 @@ map.on('click', function (e) {
 });
 
 function setupFormEvents() {
+    console.log("[DEBUG] setupFormEvents execution started");
     const searchInput = document.getElementById('street-search');
+    console.log("[DEBUG] searchInput element:", !!searchInput);
     const dropdown = document.getElementById('street-dropdown');
     const hiddenId = document.getElementById('selected-street-id');
     const form = document.getElementById('street-report-form');
@@ -340,71 +349,80 @@ function setupFormEvents() {
         });
     }
 
-    // Autocomplete Dropdown Logic
-    searchInput.addEventListener('input', async (e) => {
-        // Send both the raw text and the accent-stripped normalized text to help SQLite matching
-        const rawQ = e.target.value;
-        const q = rawQ.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Helper to attach autocomplete logic to any inputs
+    function attachAutocomplete(inputId, dropdownId, hiddenValId) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+        const hiddenId = document.getElementById(hiddenValId);
 
-        if (q.length < 2) {
-            dropdown.style.display = 'none';
-            return;
-        }
+        if (!input || !dropdown || !hiddenId) return;
 
-        try {
-            const res = await fetch(`/api/streets/search?q=${encodeURIComponent(q)}&raw=${encodeURIComponent(rawQ)}`);
-            const streets = await res.json();
-
-            dropdown.innerHTML = '';
-            if (streets.length > 0) {
-                dropdown.style.display = 'block';
-                streets.forEach(s => {
-                    const div = document.createElement('div');
-                    div.className = 'dropdown-item';
-                    div.textContent = s.name;
-                    div.onclick = async () => {
-                        searchInput.value = s.name;
-                        hiddenId.value = s.id;
-                        dropdown.style.display = 'none';
-                        await prepareStreetSelection(s.id);
-                    };
-                    dropdown.appendChild(div);
-                });
-            } else {
+        input.addEventListener('input', async (e) => {
+            const rawQ = e.target.value;
+            const q = rawQ.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (q.length < 2) {
                 dropdown.style.display = 'none';
+                return;
             }
-        } catch (e) { console.error(e); }
-    });
+            try {
+                const res = await fetch(`/api/streets/search?q=${encodeURIComponent(q)}&raw=${encodeURIComponent(rawQ)}`);
+                const streets = await res.json();
+                dropdown.innerHTML = '';
+                if (streets.length > 0) {
+                    dropdown.style.display = 'block';
+                    streets.forEach(s => {
+                        const div = document.createElement('div');
+                        div.className = 'dropdown-item';
+                        div.textContent = s.name;
+                        div.onclick = async () => {
+                            input.value = s.name;
+                            hiddenId.value = s.id;
+                            dropdown.style.display = 'none';
+                            await prepareStreetSelection(s.id);
+                        };
+                        dropdown.appendChild(div);
+                    });
+                } else {
+                    dropdown.style.display = 'none';
+                }
+            } catch (e) { console.error(e); }
+        });
 
-    // Close dropdown on click outside
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none';
+        });
+    }
 
-    // Form submission
-    form.addEventListener('submit', async (e) => {
+    attachAutocomplete('street-search-danger', 'street-dropdown-danger', 'selected-street-id-danger');
+    attachAutocomplete('street-search-help', 'street-dropdown-help', 'selected-street-id-help');
+
+    // Generic Submit Handler
+    async function handleReportSubmit(e, formId, hiddenId, statusSelectId, extractDescCb) {
         e.preventDefault();
+        const hiddenElem = document.getElementById(hiddenId);
 
-        if (!hiddenId.value) {
+        if (!hiddenElem.value) {
             alert("Por favor, selecione uma rua da lista.");
             return;
         }
 
         if (!isSelectionMode || tempMarkers.length === 0) {
-            alert("Você precisa clicar no mapa (na área ou faixa azul da rua) para inserir pelo menos 1 ponto antes de enviar.");
+            alert("Você precisa clicar no mapa para inserir pelo menos 1 ponto exato (máx 3) antes de enviar.");
             return;
         }
 
-        const isGoodFaith = confirm("⚠️ ATENÇÃO ⚠️\n\nA prestação de informações FALSAS em situações de CALAMIDADE PÚBLICA é crime e dificulta as equipes de regate.\nVocê atesta sob responsabilidade da sua conta Google que essa informação é verdadeira?");
-
+        const isGoodFaith = confirm("⚠️ ATENÇÃO ⚠️\n\nA prestação de informações FALSAS em situações de CALAMIDADE PÚBLICA atrapalha resgates e logística!\nVocê atesta sob responsabilidade da sua conta Google que essa informação é verdadeira?");
         if (!isGoodFaith) return;
 
-        // Build Payload
+        let desc = null;
+        if (extractDescCb) {
+            desc = extractDescCb();
+        }
+
         const data = {
-            streetId: hiddenId.value,
-            status: document.getElementById('status-select').value,
+            streetId: hiddenElem.value,
+            status: document.getElementById(statusSelectId).value,
+            description: desc,
             markers: tempMarkers.map(m => m.getLatLng())
         };
 
@@ -417,9 +435,10 @@ function setupFormEvents() {
             const result = await res.json();
 
             if (result.success) {
-                alert("Alerta enviado! O mapa foi atualizado.");
-                form.reset();
-                hiddenId.value = '';
+                alert("Ponto registrado com sucesso! O mapa foi atualizado.");
+                document.getElementById(formId).reset();
+                hiddenElem.value = '';
+                document.getElementById('family-fields') && (document.getElementById('family-fields').style.display = 'none');
 
                 // Cleanup
                 if (streetGeoLayer) map.removeLayer(streetGeoLayer);
@@ -431,12 +450,41 @@ function setupFormEvents() {
 
                 loadMapData();
             } else {
-                alert(result.error || "Erro ao enviar alerta.");
+                alert(result.error || "Erro ao registrar ponto.");
             }
         } catch (error) {
-            alert("Erro de conexão.");
+            alert("Erro de conexão com o servidor.");
         }
-    });
+    }
+
+    // Attach to Form Danger
+    const formDanger = document.getElementById('street-report-form-danger');
+    if (formDanger) {
+        formDanger.addEventListener('submit', (e) => {
+            handleReportSubmit(e, 'street-report-form-danger', 'selected-street-id-danger', 'status-select-danger', null);
+        });
+    }
+
+    // Attach to Form Help
+    const formHelp = document.getElementById('street-report-form-help');
+    if (formHelp) {
+        formHelp.addEventListener('submit', (e) => {
+            handleReportSubmit(e, 'street-report-form-help', 'selected-street-id-help', 'status-select-help', () => {
+                const status = document.getElementById('status-select-help').value;
+                if (status === 'need_help') {
+                    const fname = document.getElementById('family-name').value.trim();
+                    const fphone = document.getElementById('family-phone').value.trim();
+                    if (fname || fphone) {
+                        let msg = [];
+                        if (fname) msg.push(`Contato: ${fname}`);
+                        if (fphone) msg.push(`Tel/Pix: ${fphone}`);
+                        return msg.join(' | ');
+                    }
+                }
+                return null;
+            });
+        });
+    }
 }
 
 // Start

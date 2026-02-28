@@ -1,25 +1,9 @@
--> Going to Instagram login...
-=== FOUND INPUTS ===
-[
-  {
-    "name": "email",
-    "type": "text",
-    "aria": null,
-    "id": "_R_32d9lplcldcpbn6b5ipamH1_",
-    "class": "x1i10hfl xggy1nq xtpw4lu x1tutvks x1s3xk63 x1s07b3s x1a2a7pz xjbqb8w x1v8p93f x1o3jo1z x16stqrj xv5lvn5 x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 xzsf02u x1lliihq x15h3p50 x10emqs4 x1vr9vpq x1iyjqo2 x10d0gm4 x1fhayk4 x16wdlz0 x3cjxhe xe9ewy2 x11lt19s xeuugli xlyipyv x1hcrkkg xfvqz1d x12vv892 x1hu168l xttzon8 x1sfh74k x3fqe8q x185fvkj x1p97g3g xmtqnhx x11ig0mb xgmu6d7 x1quw8ve xx0ingd xdj266r xyiysdx x14vy60q x109j2v6 xp5op4 x1y44fgy xdzva22 xs8nzd4 x1fzehxr xha3pab"
-  },
-  {
-    "name": "pass",
-    "type": "password",
-    "aria": null,
-    "id": "_R_33d9lplcldcpbn6b5ipamH1_",
-    "class": "x1i10hfl xggy1nq xtpw4lu x1tutvks x1s3xk63 x1s07b3s x1a2a7pz xjbqb8w x1v8p93f x1o3jo1z x16stqrj xv5lvn5 x1ejq31n x18oe1m7 x1sy0etr xstzfhl x972fbf x10w94by x1qhh985 x14e42zd x9f619 xzsf02u x1lliihq x15h3p50 x10emqs4 x1vr9vpq x1iyjqo2 x10d0gm4 x1fhayk4 x16wdlz0 x3cjxhe xe9ewy2 x11lt19s xeuugli xlyipyv x1hcrkkg xfvqz1d x12vv892 x1hu168l xttzon8 x1sfh74k x3fqe8q x185fvkj x1p97g3g xmtqnhx x11ig0mb xgmu6d7 x1quw8ve xx0ingd xp5op4 x1y44fgy xdzva22 xs8nzd4 x1fzehxr xha3pab"
-  },
-  {
-    "name": "",
-    "type": "submit",
-    "aria": null,
-    "id": "",
-    "class": ""
-  }
-]
+DOM LOG: [DEBUG] initApp started
+DOM LOG: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+DOM LOG: [DEBUG] checkAuth finished
+DOM LOG: [DEBUG] loadMapData finished
+DOM LOG: [DEBUG] setupFormEvents execution started
+DOM LOG: [DEBUG] searchInput element: true
+DOM LOG: [DEBUG] setupFormEvents finished
+DOM LOG: Failed to load resource: the server responded with a status of 404 (Not Found)
+Typing 'avenida'...

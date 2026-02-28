@@ -41,26 +41,152 @@
                 </p>
             </header>
 
+            <div class="auth-section-wrapper"
+                style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                <div id="auth-section">
+                    <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 10px;">Faça login com o Google para
+                        reportar áreas afetadas ou solicitar ajuda.</p>
+                    <a href="/auth/google" class="btn-google" style="display: block; text-align: center;">Entrar com
+                        Google</a>
+                </div>
+
+                <div id="user-info-section" style="display: none;">
+                    <div class="user-info" style="justify-content: space-between; margin-bottom: 0;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img id="user-avatar" src="" alt="Avatar"
+                                style="width: 32px; height: 32px; border-radius: 50%;">
+                            <span id="user-name" style="font-size: 0.85rem; font-weight: bold;"></span>
+                        </div>
+                        <a href="/auth/logout" class="btn-logout"
+                            style="padding: 5px 10px; font-size: 0.75rem;">Sair</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="legend-section">
                 <h3>Legenda do Mapa</h3>
                 <ul class="legend-list">
-                    <li>
-                        <span class="legend-color color-total"></span>
-                        <span class="legend-text">Interdição Total</span>
+                    <li><span class="legend-color color-total"></span><span class="legend-text">Interdição Total</span>
                     </li>
-                    <li>
-                        <span class="legend-color color-parcial"></span>
-                        <span class="legend-text">Interdição Parcial</span>
-                    </li>
-                    <li>
-                        <span class="legend-color color-bridge"></span>
-                        <span class="legend-text">Ponte com Risco/Colapsada</span>
-                    </li>
-                    <li>
-                        <span class="legend-color color-doacao"></span>
-                        <span class="legend-text">Ponto de Doação 🍀</span>
-                    </li>
+                    <li><span class="legend-color color-parcial"></span><span class="legend-text">Interdição
+                            Parcial</span></li>
+                    <li><span class="legend-color color-bridge"></span><span class="legend-text">Ponte com
+                            Risco/Colapsada</span></li>
+                    <li><span class="legend-color color-doacao"></span><span class="legend-text">Ponto de Doação
+                            🍀</span></li>
+                    <li><span class="legend-color" style="background:#8b5cf6;"></span><span class="legend-text">Família
+                            com Necessidade 🆘</span></li>
                 </ul>
+            </div>
+
+            <div class="community-feed" id="forms-container" style="display: none;">
+                <!-- Painel Admin -->
+                <div id="admin-panel"
+                    style="display: none; padding: 15px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 20px;">
+                    <h3
+                        style="color: #60a5fa; font-size: 0.9rem; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 1.1rem;">👑</span> PAINEL ADMINISTRATIVO</h3>
+                    <div style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 10px;">Gestão de Logradouros Oficial
+                    </div>
+                    <form id="add-street-form" style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" id="new-street-name" placeholder="Nome da Rua (Ex: Praça Guido)" required
+                            style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
+                        <button type="submit"
+                            style="padding: 8px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Cadastrar
+                            Via</button>
+                    </form>
+                    <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0;">
+                    <form id="delete-street-form" style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" id="delete-street-id" placeholder="ID da Rua para excluir" required
+                            style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
+                        <button type="submit"
+                            style="padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Excluir
+                            Via</button>
+                    </form>
+                    <div id="big-boss-only-section" style="display: none;">
+                        <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0;">
+                        <form id="add-admin-form" style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="email" id="new-admin-email" placeholder="E-mail Gmail do Oficial" required
+                                style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
+                            <button type="submit"
+                                style="padding: 8px; background: #fbbf24; color: #000; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Conceder
+                                Admin 👑</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Formulários Divididos -->
+                <div class="forms-split" style="display: flex; flex-direction: column; gap: 20px;">
+
+                    <!-- BLOCO 1: Interdições -->
+                    <div class="form-block"
+                        style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                        <h3 style="color: #fca5a5; margin-top: 0; margin-bottom: 15px;">🚧 Áreas Alagadas / Interdições
+                        </h3>
+                        <form id="street-report-form-danger">
+                            <label for="street-search-danger">Logradouro:</label>
+                            <div style="position: relative; margin-bottom: 10px;">
+                                <input type="text" id="street-search-danger" placeholder="Busque a rua..."
+                                    autocomplete="off" required>
+                                <div id="street-dropdown-danger" class="dropdown-list"></div>
+                            </div>
+                            <input type="hidden" id="selected-street-id-danger">
+
+                            <label for="status-select-danger">Situação:</label>
+                            <select id="status-select-danger" required style="margin-bottom: 10px;">
+                                <option value="">Selecione o alerta...</option>
+                                <option value="total">Interdição Total</option>
+                                <option value="parcial">Interdição Parcial / Água Secando</option>
+                                <option value="bridge">Ponte com Risco</option>
+                            </select>
+
+                            <button type="submit" class="btn-submit" style="background: #ef4444;">Marcar
+                                Interdição</button>
+                        </form>
+                    </div>
+
+                    <!-- BLOCO 2: Ajuda -->
+                    <div class="form-block"
+                        style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <h3 style="color: #6ee7b7; margin-top: 0; margin-bottom: 15px;">🤝 Coleta e Famílias</h3>
+                        <form id="street-report-form-help">
+                            <label for="street-search-help">Logradouro:</label>
+                            <div style="position: relative; margin-bottom: 10px;">
+                                <input type="text" id="street-search-help" placeholder="Busque a rua..."
+                                    autocomplete="off" required>
+                                <div id="street-dropdown-help" class="dropdown-list"></div>
+                            </div>
+                            <input type="hidden" id="selected-street-id-help">
+
+                            <label for="status-select-help">Tipo de Ajuda:</label>
+                            <select id="status-select-help" required style="margin-bottom: 10px;"
+                                onchange="document.getElementById('family-fields').style.display = this.value === 'need_help' ? 'block' : 'none'">
+                                <option value="">Selecione o tipo...</option>
+                                <option value="doacao">Ponto de Coleta/Doação 🍀</option>
+                                <option value="need_help">Famílias com Necessidade 🆘</option>
+                            </select>
+
+                            <div id="family-fields" style="display: none; margin-bottom: 10px;">
+                                <label for="family-name">Nome do Responsável (Opcional):</label>
+                                <input type="text" id="family-name" placeholder="Ex: Maria" style="margin-bottom: 5px;">
+                                <label for="family-phone">Telefone / Pix (Opcional):</label>
+                                <input type="text" id="family-phone" placeholder="Ex: (32) 99999-9999">
+                            </div>
+
+                            <button type="submit" class="btn-submit" style="background: #10b981;">Registrar
+                                Ponto</button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- Shared Visual Marker Logic -->
+                <div id="marker-instruction"
+                    style="display:none; color:var(--accent); font-weight:bold; font-size:0.85rem; padding: 10px 0; line-height:1.4; margin-top: 15px;">
+                    🗺️ Modo de Seleção Ativo: Clique no mapa para marcar o ponto exato da rua selecionada (máx 3).
+                </div>
+                <ul id="selected-points-list"
+                    style="list-style:none; padding:0; font-size:0.8rem; margin-bottom:10px; color:#9ca3af;"></ul>
             </div>
 
             <div class="emergency-contacts">
@@ -83,99 +209,9 @@
                     <a href="https://www.uba.mg.gov.br/materias" target="_blank" rel="noopener" class="btn-source">Pref.
                         Ubá (Site Oficial)</a>
                     <a href="https://www.policiamilitar.mg.gov.br/" target="_blank" rel="noopener"
-                        class="btn-source">Polícia Militar MG (PMMG/PMRv)</a>
+                        class="btn-source">Polícia Militar MG</a>
                     <a href="http://www.defesacivil.mg.gov.br/" target="_blank" rel="noopener" class="btn-source">Defesa
                         Civil MG</a>
-                </div>
-            </div>
-
-            <div class="community-feed">
-                <h3>Reporte um Problema</h3>
-
-                <div id="auth-section">
-                    <p class="temp-msg">O relato comunitário exige login para prevenir abusos contra as equipes de
-                        salvamento.</p>
-                    <a href="/auth/google" class="btn-google">Entrar com Google</a>
-                </div>
-
-                <div id="report-form" style="display: none;">
-                    <div class="user-info">
-                        <img id="user-avatar" src="" alt="Avatar">
-                        <span id="user-name"></span>
-                        <a href="/auth/logout" class="btn-logout">Sair</a>
-                    </div>
-
-                    <!-- Painel Administrativo Oculto (Apenas Admin/Big-Boss) -->
-                    <div id="admin-panel"
-                        style="display: none; padding: 15px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 20px;">
-                        <h3
-                            style="color: #60a5fa; font-size: 0.9rem; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
-                            <span style="font-size: 1.1rem;">👑</span> PAINEL ADMINISTRATIVO
-                        </h3>
-                        <div style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 10px;">Gestão de Logradouros
-                            Oficial</div>
-
-                        <form id="add-street-form" style="display: flex; flex-direction: column; gap: 8px;">
-                            <input type="text" id="new-street-name" placeholder="Nome da Rua (Ex: Praça Guido)" required
-                                style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
-                            <button type="submit"
-                                style="padding: 8px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Cadastrar
-                                Via e Mapear (IA)</button>
-                        </form>
-
-                        <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0;">
-
-                        <form id="delete-street-form" style="display: flex; flex-direction: column; gap: 8px;">
-                            <input type="text" id="delete-street-id" placeholder="ID da Rua para excluir" required
-                                style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
-                            <button type="submit"
-                                style="padding: 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Excluir
-                                Permanentemente</button>
-                        </form>
-
-                        <div id="big-boss-only-section" style="display: none;">
-                            <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0;">
-                            <div style="font-size: 0.8rem; color: #fbbf24; margin-bottom: 10px;">Gestão de Privilégios
-                                (Dono Exclusivo)</div>
-                            <form id="add-admin-form" style="display: flex; flex-direction: column; gap: 8px;">
-                                <input type="email" id="new-admin-email" placeholder="E-mail Gmail do Oficial" required
-                                    style="padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; font-size: 0.8rem;">
-                                <button type="submit"
-                                    style="padding: 8px; background: #fbbf24; color: #000; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Conceder
-                                    Acesso Admin 👑</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <form id="street-report-form">
-                        <label for="street-search">Logradouro:</label>
-                        <div style="position: relative;">
-                            <input type="text" id="street-search" placeholder="Busque a rua..." autocomplete="off"
-                                required>
-                            <div id="street-dropdown" class="dropdown-list"></div>
-                        </div>
-                        <input type="hidden" id="selected-street-id">
-
-                        <label for="status-select">Situação:</label>
-                        <select id="status-select" required>
-                            <option value="">Selecione o alerta...</option>
-                            <option value="total">Interdição Total</option>
-                            <option value="parcial">Interdição Parcial / Água Secando</option>
-                            <option value="bridge">Ponte com Risco</option>
-                            <option value="doacao">Ponto de Doação 🍀</option>
-                        </select>
-
-                        <div id="marker-instruction"
-                            style="display:none; color:var(--accent); font-weight:bold; font-size:0.85rem; padding: 10px 0; line-height:1.4;">
-                            🗺️ Modo de Seleção Ativo: A rua está destacada no mapa. Clique diretamente na linha azul
-                            para marcar o ponto exato do problema (até 3).
-                        </div>
-                        <ul id="selected-points-list"
-                            style="list-style:none; padding:0; font-size:0.8rem; margin-bottom:10px; color:#9ca3af;">
-                        </ul>
-
-                        <button type="submit" class="btn-submit" id="submit-report-btn">Enviar Alerta</button>
-                    </form>
                 </div>
             </div>
 
