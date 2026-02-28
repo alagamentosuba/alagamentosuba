@@ -19,6 +19,7 @@ function getStatusClass(status) {
     if (status === 'parcial') return 'status-parcial';
     if (status === 'bridge') return 'status-bridge';
     if (status === 'doacao') return 'status-doacao';
+    if (status === 'need_help') return 'status-need-help';
     return '';
 }
 
@@ -27,6 +28,7 @@ function getStatusText(status) {
     if (status === 'parcial') return 'Interdição Parcial';
     if (status === 'bridge') return 'Ponte/Risco';
     if (status === 'doacao') return 'Ponto de Doação';
+    if (status === 'need_help') return 'Famílias com Necessidade';
     return 'Alerta';
 }
 
@@ -38,6 +40,8 @@ function createCustomIcon(status, isOfficial, authorRole) {
     let overlay = '';
     if (status === 'doacao') {
         overlay = '<span style="font-size:16px; line-height:0; display:block; transform:translateY(1px);">🍀</span>';
+    } else if (status === 'need_help') {
+        overlay = '<span style="font-size:16px; line-height:0; display:block; transform:translateY(1px);">🆘</span>';
     } else if (isAuthority || isOfficial) {
         overlay = '<span style="color:#fbbf24; font-size:16px; font-weight:bold; line-height:0; display:block; transform:translateY(6px); text-shadow: 0 0 2px black;">👑</span>';
     } else {

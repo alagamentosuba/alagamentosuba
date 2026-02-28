@@ -440,6 +440,17 @@ body {
     background-color: var(--doacao);
 }
 
+.status-need-help {
+    background-color: #ffffff;
+    box-shadow: 0 0 12px 2px red !important;
+    border-color: #ffcccc !important;
+}
+
+.color-need-help {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 8px red !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .app-container {
